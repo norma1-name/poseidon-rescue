@@ -1,0 +1,201 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/norma1-name/poseidon-rescue/blob/main/Poseidon%26rescue\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!git clone https://github.com/norma1-name/poseidon-rescue.git"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ePfDLgebGnRE",
+        "outputId": "e78e34a5-4890-4bcc-8422-f3d8de07aadc"
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Cloning into 'poseidon-rescue'...\n",
+            "remote: Enumerating objects: 23, done.\u001b[K\n",
+            "remote: Counting objects: 100% (23/23), done.\u001b[K\n",
+            "remote: Compressing objects: 100% (22/22), done.\u001b[K\n",
+            "remote: Total 23 (delta 2), reused 19 (delta 1), pack-reused 0 (from 0)\u001b[K\n",
+            "Receiving objects: 100% (23/23), 722.32 KiB | 3.30 MiB/s, done.\n",
+            "Resolving deltas: 100% (2/2), done.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!make clean\n",
+        "!make\n",
+        "!./poseidon_rescue"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "din-cuYoHe0J",
+        "outputId": "7823390b-8212-4482-80d7-02aa85656b1e"
+      },
+      "execution_count": 51,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "POSEIDON_RC host= 512  device= 512  → copying 512 bytes\n",
+            "POSEIDON_M host=  72  device=  72  → copying 72 bytes\n",
+            "RESCUE_RC  host= 512  device= 512  → copying 512 bytes\n",
+            "RESCUE_M   host=  72  device=  72  → copying 72 bytes\n",
+            "Poseidon throughput   : 56.68 MH/s\n",
+            "Rescue   throughput   : 32.33 MH/s\n",
+            "Leaf-hash throughput  : 1.33 GB/s (71 ms for 4194304 leaves)\n",
+            "DEBUG leaf-0          : GPU f802437c4d367d31 | CPU f802437c4d367d31 MATCH\n",
+            "Merkle root (level 22): acf46b8e3f6ad846\n",
+            "DEBUG level-1         : GPU 2eaa7262b9b55335 | CPU 2eaa7262b9b55335 MATCH\n",
+            "Proof for leaf 123456      : VALID\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%cd /content/poseidon-rescue\n",
+        "!make -j$(nproc)\n",
+        "!./poseidon_rescue | grep -E \"root|Proof\"\n",
+        "\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "izWch1NNPitV",
+        "outputId": "081078be-859f-4a69-ffff-2ec971202399"
+      },
+      "execution_count": 42,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[Errno 2] No such file or directory: '/content/poseidon-rescue # project root'\n",
+            "/content/poseidon-rescue\n",
+            "\u001b[01m\u001b[0m\u001b[01msrc/main.cu(34)\u001b[0m: \u001b[01;31merror\u001b[0m: this declaration has no storage class or type specifier\n",
+            "  HD void poseidon_permute(uint64_t s[3]);\n",
+            "  ^\n",
+            "\n",
+            "\u001b[01m\u001b[0m\u001b[01msrc/main.cu(34)\u001b[0m: \u001b[01;31merror\u001b[0m: expected a \";\"\n",
+            "  HD void poseidon_permute(uint64_t s[3]);\n",
+            "     ^\n",
+            "\n",
+            "\u001b[01m\u001b[0m\u001b[01msrc/main.cu(37)\u001b[0m: \u001b[01;31merror\u001b[0m: no instance of function template \u001b[01m\"poseidon_permute\"\u001b[0m matches the argument list\n",
+            "            argument types are: (uint64_t [3])\n",
+            "      uint64_t s[3]={0ULL,a,b}; poseidon_permute(s); return s[0];\n",
+            "                                ^\n",
+            "\u001b[01m\u001b[0m\u001b[01minclude/poseidon.cuh(10)\u001b[0m: \u001b[01;36mnote\u001b[0m #3327-D: candidate function template \u001b[01m\"poseidon_permute\"\u001b[0m failed deduction\n",
+            "  __attribute__((device)) void poseidon_permute(uint64_t state[3])\n",
+            "                               ^\n",
+            "\n",
+            "3 errors detected in the compilation of \"src/main.cu\".\n",
+            "make: *** [makefile:10: src/main.o] Error 2\n",
+            "make: *** Waiting for unfinished jobs....\n",
+            "/bin/bash: line 1: ./poseidon_rescue: No such file or directory\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%cd /content/poseidon-rescue     # <-- adjust if your folder name differs\n",
+        "!test -f include/hash_constants.cuh && echo \"✓ header found\""
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "hf7vzYqCWiNL",
+        "outputId": "857ddcc9-e87a-455e-db80-c63336dfe6db"
+      },
+      "execution_count": 43,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[Errno 2] No such file or directory: '/content/poseidon-rescue # <-- adjust if your folder name differs'\n",
+            "/content/poseidon-rescue\n",
+            "✓ header found\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%bash\n",
+        "cuobjdump --dump-elf ./poseidon_rescue | grep -A1 -B1 POSEIDON_RC | head\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "gcIiWOt3YMRU",
+        "outputId": "84ce5835-34d8-4a6a-c64d-257ee71415ea"
+      },
+      "execution_count": 33,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            " 0x10               0         0x46980     0x12     0x10   0x15     poseidon_kernel\n",
+            " 0x11           0x210           0x180     0x11        0   0x11     POSEIDON_RC\n",
+            " 0x12            0x48            0x48     0x11        0   0x11     POSEIDON_M\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "wCjfMlIUYe6t"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "name": "Making the Most of your Colab Subscription",
+      "provenance": [],
+      "gpuType": "T4",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "accelerator": "GPU"
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
